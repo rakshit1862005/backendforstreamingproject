@@ -190,50 +190,59 @@ async function addtowatchlist({email}) {
 }
 
 let cachedRecs = null;
-let lastFetched = 0;
 
-app.get('/getrec',async(req,res)=>{
+(async () => {
+  await updateRecommendations();
+})();
 
-  const now = Date.now();
-  if (cachedRecs && now - lastFetched < 1000*60*1) {
-    return res.status(200).json(cachedRecs);
-  }
-  else{
+setInterval(updateRecommendations, 1000 * 60 * 3);
+
+async function updateRecommendations() {
+  try {
     const cards = await Promise.all([
-    getcardsurl('https://api.themoviedb.org/3/movie/now_playing','New This Season'),
-    getcardsurl('https://api.themoviedb.org/3/movie/popular','Trending Movies And Shows'),
-    getcardsurl('https://api.themoviedb.org/3/movie/upcoming','Upcoming',),
-    getcardsgenre('https://api.themoviedb.org/3/discover/movie',14,'Fantasy'),
-    getcardsgenre('https://api.themoviedb.org/3/discover/movie',27,'Horror Picks'),
-    getcardsgenre('https://api.themoviedb.org/3/discover/movie',9648,'Romantic Picks'),
-    getcardsgenre('https://api.themoviedb.org/3/discover/movie',10752,'Know More About Wars'),
-    getcardsgenre('https://api.themoviedb.org/3/discover/movie',99,'Top In Documentaries'),
-    getcardsgenre('https://api.themoviedb.org/3/discover/movie',16,'In Mood For Some Anime','ja'),
-    getcardsgenre('https://api.themoviedb.org/3/discover/movie',80,'Crime'),]);
-    
-    let reccomendations = {};
-    for(let i=0;i<10;i++){
-        reccomendations[`card${i+1}`]=cards[i];
-    }
-    
+      getcardsurl('https://api.themoviedb.org/3/movie/now_playing','New This Season'),
+      getcardsurl('https://api.themoviedb.org/3/movie/popular','Trending Movies And Shows'),
+      getcardsurl('https://api.themoviedb.org/3/movie/upcoming','Upcoming'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/movie',14,'Fantasy'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/movie',27,'Horror Picks'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/movie',9648,'Romantic Picks'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/movie',10752,'Know More About Wars'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/movie',99,'Top In Documentaries'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/movie',16,'In Mood For Some Anime','ja'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/movie',80,'Crime'),
+    ]);
 
-  const banneridx = Math.floor(Math.random()*19);
-  const banner = await getbanner('https://api.themoviedb.org/3/movie/popular');
-  const trailer = await getrailer(banner.results[banneridx].id);
-  const logo = await getlogo(banner.results[banneridx].id);
-
-  const bannerdata = {'bannerindex':banneridx,
-                      'bannerdetail':banner,
-                      'logo':logo,
-                      'trailer':trailer
+    const reccomendations = {};
+    for (let i = 0; i < cards.length; i++) {
+      reccomendations[`card${i + 1}`] = cards[i];
     }
-    reccomendations['BannerData'] = bannerdata;
-  cachedRecs = reccomendations;
-  lastFetched = now;
-  res.status(200).json(reccomendations);
+
+    const banner = await getbanner('https://api.themoviedb.org/3/movie/popular');
+    const banneridx = Math.floor(Math.random() * Math.min(20, banner.results.length));
+    const trailer = await getrailer(banner.results[banneridx].id);
+    const logo = await getlogo(banner.results[banneridx].id);
+
+    reccomendations.BannerData = {
+      bannerindex: banneridx,
+      bannerdetail: banner,
+      logo,
+      trailer,
+    };
+
+    cachedRecs = reccomendations;
+    console.log("Recommendations updated at", new Date().toLocaleString());
+
+  } catch (err) {
+    console.error("Failed to fetch recommendations:", err.message);
   }
+}
 
-})
+app.get('/getrec', (req, res) => {
+  if (!cachedRecs) {
+    return res.status(503).json({ message: "Recommendations are being prepared, please try again shortly." });
+  }
+  res.status(200).json(cachedRecs);
+});
 
 
 app.get('/searchkey',async(req,res)=>{
