@@ -237,11 +237,41 @@ async function updateRecommendations() {
   }
 }
 
-app.get('/getrec', (req, res) => {
+app.get('/getrecbanner', (req, res) => {
   if (!cachedRecs) {
     return res.status(503).json({ message: "Recommendations are being prepared, please try again shortly." });
   }
-  res.status(200).json(cachedRecs);
+  res.status(200).json({BannerData:cachedRecs.BannerData});
+});
+
+app.get('/getrec1', (req, res) => {
+  if (!cachedRecs) {
+    return res.status(503).json({ message: "Recommendations are being prepared, please try again shortly." });
+  }
+  res.status(200).json({
+    card1:cachedRecs.card1,
+    card2:cachedRecs.card2,
+    card3:cachedRecs.card3});
+});
+
+app.get('/getrec2', (req, res) => {
+  if (!cachedRecs) {
+    return res.status(503).json({ message: "Recommendations are being prepared, please try again shortly." });
+  }
+  res.status(200).json({
+    card4:cachedRecs.card4,
+    card5:cachedRecs.card5,
+    card6:cachedRecs.card6});
+});
+
+app.get('/getrec3', (req, res) => {
+  if (!cachedRecs) {
+    return res.status(503).json({ message: "Recommendations are being prepared, please try again shortly." });
+  }
+  res.status(200).json({
+    card7:cachedRecs.card7,
+    card8:cachedRecs.card8,
+    card9:cachedRecs.card9});
 });
 
 
