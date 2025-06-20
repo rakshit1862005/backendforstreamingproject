@@ -223,7 +223,6 @@ async function updateRecommendations() {
       getcardsurl('https://api.themoviedb.org/3/movie/upcoming', 'Upcoming Movies'),
       getcardsgenre('https://api.themoviedb.org/3/discover/movie', 14, 'Fantasy'),
       getcardsgenre('https://api.themoviedb.org/3/discover/movie', 27, 'Horror Picks'),
-      getcardsgenre('https://api.themoviedb.org/3/discover/movie', 9648, 'Romantic Picks'),
       getcardsgenre('https://api.themoviedb.org/3/discover/movie', 10752, 'Know More About Wars'),
       getcardsgenre('https://api.themoviedb.org/3/discover/movie', 99, 'Top In Documentaries'),
       getcardsgenre('https://api.themoviedb.org/3/discover/movie', 16, 'In Mood For Some Anime Movies', 'ja'),
@@ -336,7 +335,7 @@ app.get('/getrec5',(req,res)=>{
   }
   res.status(200).json({
     card4:cachedRecs.card4,
-    card5:cachedRecs.card5,
+    card18:cachedRecs.card18,
     card15:cachedRecs.card15
     
   });
@@ -354,14 +353,7 @@ app.get('/getrec6',(req,res)=>{
   });
 });
 
-app.get('/getrec7',(req,res)=>{
-  if (!cachedRecs) {
-    return res.status(503).json({ message: "Recommendations are being prepared, please try again shortly." });
-  }
-  res.status(200).json({
-    card18:cachedRecs.card18
-  });
-});
+
 
 
 app.get('/searchkey',async(req,res)=>{
