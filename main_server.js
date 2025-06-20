@@ -337,7 +337,7 @@ app.get('/getrec6',(req,res)=>{
     return res.status(503).json({ message: "Recommendations are being prepared, please try again shortly." });
   }
   res.status(200).json({
-    card17:cachedRecs.card17,
+    card14:cachedRecs.card14,
     card6:cachedRecs.card6,
     card18:cachedRecs.card18
   });
