@@ -316,7 +316,7 @@ app.get('/getrec3', (req, res) => {
     card7:cachedRecs.card7,
     card8:cachedRecs.card8,
     card19:cachedRecs.card19,
-    card9:cachedRecs.card9});
+  });
 });
 
 app.get('/getrec4',(req,res)=>{
@@ -347,8 +347,18 @@ app.get('/getrec6',(req,res)=>{
     return res.status(503).json({ message: "Recommendations are being prepared, please try again shortly." });
   }
   res.status(200).json({
+    card9:cachedRecs.card9,
     card14:cachedRecs.card14,
     card6:cachedRecs.card6,
+
+  });
+});
+
+app.get('/getrec7',(req,res)=>{
+  if (!cachedRecs) {
+    return res.status(503).json({ message: "Recommendations are being prepared, please try again shortly." });
+  }
+  res.status(200).json({
     card18:cachedRecs.card18
   });
 });
