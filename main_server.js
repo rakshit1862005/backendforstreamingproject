@@ -94,7 +94,7 @@ async function getcardsgenre(url1,genreid,cardname,olang='en',type='movie',bange
     method: 'GET',
     url: url1,
     params: {
-    'first_air_date.gte': gte,
+    'air_date.gte': gte,
     include_adult: 'false',
     include_video: 'false',
     language: 'en-US',
@@ -235,7 +235,7 @@ async function updateRecommendations() {
       getcardsurl('https://api.themoviedb.org/3/tv/airing_today', 'New Shows','tv'),
       getcardsurl('https://api.themoviedb.org/3/tv/top_rated', 'Highest Rated Shows','tv'),
       getcardsgenre('https://api.themoviedb.org/3/discover/tv', '18,16', 'Shonen Jump','ja','tv','10762'),
-      getcardsgenre('https://api.themoviedb.org/3/discover/tv', '16', 'Latest In Anime Collection','ja','tv','10762',twoMonthsAgo.toString())
+      getcardsgenre('https://api.themoviedb.org/3/discover/tv', '16', 'Latest In Anime Collection','ja','tv','10762','2025')
 
     ]);
 
@@ -303,7 +303,7 @@ app.get('/getrec2', (req, res) => {
   res.status(200).json({
     card17:cachedRecs.card17,
     card3:cachedRecs.card3,
-    card13:cachedRecs.card13,
+    card4:cachedRecs.card4
   });
 });
 
@@ -334,7 +334,8 @@ app.get('/getrec5',(req,res)=>{
     return res.status(503).json({ message: "Recommendations are being prepared, please try again shortly." });
   }
   res.status(200).json({
-    card4:cachedRecs.card4,
+    
+    card13:cachedRecs.card13,
     card18:cachedRecs.card18,
     card15:cachedRecs.card15
     
