@@ -31,6 +31,11 @@ mongoose.connect(MONGO_URL).then(()=>{
 app.use(cors({
   
 }))
+
+const today = new Date();
+const twoMonthsAgo = new Date();
+twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+
 async function getlogo(id,type='movie') {
     const m_id=id;
     const options = {
@@ -83,12 +88,13 @@ async function getbanner(url1) {
     return (result);
 }
 
-async function getcardsgenre(url1,genreid,cardname,olang='en',type='movie',bangenre='%20') {
+async function getcardsgenre(url1,genreid,cardname,olang='en',type='movie',bangenre='%20',gte='%20') {
   
     const options = {
     method: 'GET',
     url: url1,
     params: {
+    'first_air_date.gte': gte,
     include_adult: 'false',
     include_video: 'false',
     language: 'en-US',
@@ -230,6 +236,7 @@ async function updateRecommendations() {
       getcardsurl('https://api.themoviedb.org/3/tv/airing_today', 'New Shows','tv'),
       getcardsurl('https://api.themoviedb.org/3/tv/top_rated', 'Highest Rated Shows','tv'),
       getcardsgenre('https://api.themoviedb.org/3/discover/tv', '18,16', 'Shonen Jump','ja','tv','10762'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/tv', '16', 'Latest In Anime Collection','ja','tv','10762',twoMonthsAgo.toString())
 
     ]);
 
@@ -308,6 +315,7 @@ app.get('/getrec3', (req, res) => {
   res.status(200).json({
     card7:cachedRecs.card7,
     card8:cachedRecs.card8,
+    card19:cachedRecs.card19,
     card9:cachedRecs.card9});
 });
 
