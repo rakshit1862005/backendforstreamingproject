@@ -6,6 +6,7 @@ import dotenv from 'dotenv'
 import WatchlistRoute from './routes/WatchlistRoute.js'
 import GetlistRoute from './routes/GetlistRoute.js'
 
+
 dotenv.config()
 
 const app = express()
@@ -14,6 +15,7 @@ app.use(express.json());
 
 const port = process.env.PORT || 5000
 const MONGO_URL = process.env.MONGO_URL;
+const tmdbkey = process.env.TMDB_API_KEY;
 
 
 
@@ -36,7 +38,7 @@ async function getlogo(id,type='movie') {
     url: `https://api.themoviedb.org/3/${type}/${m_id}/images`,
     headers: {
         accept: 'application/json',
-        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3NmRjMzVhMGVjMGJjMDNiMGNjZGUxMTZhODAyYmUyOSIsIm5iZiI6MTc0ODUwODYzMS42NTQsInN1YiI6IjY4MzgxZmQ3OGVjZTdhMWRhZTQxNTBmOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FMsi42cb0a-nmEw2H-_uUXZ4xrTM5kplWancQhl5rM4'
+        Authorization: tmdbkey
     }
     };
     const resp = await axios.request(options);
@@ -55,7 +57,7 @@ async function getrailer(id) {
     params: {language: 'en-US'},
     headers: {
     accept: 'application/json',
-    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3NmRjMzVhMGVjMGJjMDNiMGNjZGUxMTZhODAyYmUyOSIsIm5iZiI6MTc0ODUwODYzMS42NTQsInN1YiI6IjY4MzgxZmQ3OGVjZTdhMWRhZTQxNTBmOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FMsi42cb0a-nmEw2H-_uUXZ4xrTM5kplWancQhl5rM4'
+    Authorization: tmdbkey
   }
 };
     const resp = await axios.request(options);
@@ -72,7 +74,7 @@ async function getbanner(url1) {
         params: {language: 'en-US', page: '1'},
         headers: {
             accept: 'application/json',
-            Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3NmRjMzVhMGVjMGJjMDNiMGNjZGUxMTZhODAyYmUyOSIsIm5iZiI6MTc0ODUwODYzMS42NTQsInN1YiI6IjY4MzgxZmQ3OGVjZTdhMWRhZTQxNTBmOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FMsi42cb0a-nmEw2H-_uUXZ4xrTM5kplWancQhl5rM4'
+            Authorization: tmdbkey
         }
     }
     let response = await axios.request(options);
@@ -99,7 +101,7 @@ async function getcardsgenre(url1,genreid,cardname,olang='en',type='movie',bange
   },
   headers: {
     accept: 'application/json',
-    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3NmRjMzVhMGVjMGJjMDNiMGNjZGUxMTZhODAyYmUyOSIsIm5iZiI6MTc0ODUwODYzMS42NTQsInN1YiI6IjY4MzgxZmQ3OGVjZTdhMWRhZTQxNTBmOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FMsi42cb0a-nmEw2H-_uUXZ4xrTM5kplWancQhl5rM4'
+    Authorization: tmdbkey
   }
 };
 
@@ -118,7 +120,7 @@ async function getcardsgenre(url1,genreid,cardname,olang='en',type='movie',bange
   },
   headers: {
     accept: 'application/json',
-    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3NmRjMzVhMGVjMGJjMDNiMGNjZGUxMTZhODAyYmUyOSIsIm5iZiI6MTc0ODUwODYzMS42NTQsInN1YiI6IjY4MzgxZmQ3OGVjZTdhMWRhZTQxNTBmOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FMsi42cb0a-nmEw2H-_uUXZ4xrTM5kplWancQhl5rM4'
+    Authorization: tmdbkey
   }
 };
 
@@ -143,7 +145,7 @@ async function getcardsurl(url1,cardname,type='movie'){
     params: {language: 'en-US', page: '1'},
     headers: {
     accept: 'application/json',
-    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3NmRjMzVhMGVjMGJjMDNiMGNjZGUxMTZhODAyYmUyOSIsIm5iZiI6MTc0ODUwODYzMS42NTQsInN1YiI6IjY4MzgxZmQ3OGVjZTdhMWRhZTQxNTBmOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FMsi42cb0a-nmEw2H-_uUXZ4xrTM5kplWancQhl5rM4'
+    Authorization: tmdbkey
   }
 };
     const title = cardname;
@@ -164,7 +166,7 @@ async function searching(keyword) {
   params: {query: keyword,include_adult: 'false', language: 'en-US', page: '1'},
   headers: {
     accept: 'application/json',
-    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3NmRjMzVhMGVjMGJjMDNiMGNjZGUxMTZhODAyYmUyOSIsIm5iZiI6MTc0ODUwODYzMS42NTQsInN1YiI6IjY4MzgxZmQ3OGVjZTdhMWRhZTQxNTBmOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FMsi42cb0a-nmEw2H-_uUXZ4xrTM5kplWancQhl5rM4'
+    Authorization: tmdbkey
   }
 };
 
@@ -174,7 +176,7 @@ async function searching(keyword) {
   params: {query: keyword,include_adult: 'false', language: 'en-US', page: '1'},
   headers: {
     accept: 'application/json',
-    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3NmRjMzVhMGVjMGJjMDNiMGNjZGUxMTZhODAyYmUyOSIsIm5iZiI6MTc0ODUwODYzMS42NTQsInN1YiI6IjY4MzgxZmQ3OGVjZTdhMWRhZTQxNTBmOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FMsi42cb0a-nmEw2H-_uUXZ4xrTM5kplWancQhl5rM4'
+    Authorization: tmdbkey
   }
 };
  
