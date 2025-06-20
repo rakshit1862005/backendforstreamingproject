@@ -81,7 +81,8 @@ async function getbanner(url1) {
     return (result);
 }
 
-async function getcardsgenre(url1,genreid,cardname,olang='en') {
+async function getcardsgenre(url1,genreid,cardname,olang='en',type='movie',bangenre='%20') {
+  
     const options = {
     method: 'GET',
     url: url1,
@@ -92,7 +93,9 @@ async function getcardsgenre(url1,genreid,cardname,olang='en') {
     page: '1',
     sort_by: 'popularity.desc',
     with_genres: genreid,
-    with_original_language: olang
+    with_original_language: olang,
+    without_genres: bangenre
+
   },
   headers: {
     accept: 'application/json',
@@ -110,7 +113,8 @@ async function getcardsgenre(url1,genreid,cardname,olang='en') {
     page: '2',
     sort_by: 'popularity.desc',
     with_genres: genreid,
-    with_original_language: olang
+    with_original_language: olang,
+    without_genres: bangenre
   },
   headers: {
     accept: 'application/json',
@@ -126,10 +130,13 @@ const result = {}
 result['data']=data.data.results;
 result['data']=result['data'].concat(data1.data.results);
 result['acardname']=title;
+result['data'].map((object)=>{
+  object['media_type']=type;
+})
 return (result);
 }
 
-async function getcardsurl(url1,cardname){
+async function getcardsurl(url1,cardname,type='movie'){
     const options = {
     method: 'GET',
     url: url1,
@@ -144,6 +151,9 @@ async function getcardsurl(url1,cardname){
     const result = {}
     result['data']=data.data.results;
     result['acardname']=title;
+result['data'].map((object)=>{
+  object['media_type']=type;
+})
     return (result);
 }
 
@@ -200,16 +210,25 @@ setInterval(updateRecommendations, 1000 * 60 * 3);
 async function updateRecommendations() {
   try {
     const cards = await Promise.all([
-      getcardsurl('https://api.themoviedb.org/3/movie/now_playing','New This Season'),
-      getcardsurl('https://api.themoviedb.org/3/movie/popular','Trending Movies And Shows'),
-      getcardsurl('https://api.themoviedb.org/3/movie/upcoming','Upcoming'),
-      getcardsgenre('https://api.themoviedb.org/3/discover/movie',14,'Fantasy'),
-      getcardsgenre('https://api.themoviedb.org/3/discover/movie',27,'Horror Picks'),
-      getcardsgenre('https://api.themoviedb.org/3/discover/movie',9648,'Romantic Picks'),
-      getcardsgenre('https://api.themoviedb.org/3/discover/movie',10752,'Know More About Wars'),
-      getcardsgenre('https://api.themoviedb.org/3/discover/movie',99,'Top In Documentaries'),
-      getcardsgenre('https://api.themoviedb.org/3/discover/movie',16,'In Mood For Some Anime','ja'),
-      getcardsgenre('https://api.themoviedb.org/3/discover/movie',80,'Crime'),
+      getcardsurl('https://api.themoviedb.org/3/movie/now_playing', 'New Movies This Season'),
+      getcardsurl('https://api.themoviedb.org/3/movie/popular', 'Trending Movies'),
+      getcardsurl('https://api.themoviedb.org/3/movie/upcoming', 'Upcoming Movies'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/movie', 14, 'Fantasy'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/movie', 27, 'Horror Picks'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/movie', 9648, 'Romantic Picks'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/movie', 10752, 'Know More About Wars'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/movie', 99, 'Top In Documentaries'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/movie', 16, 'In Mood For Some Anime Movies', 'ja'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/movie', 80, 'Crime'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/tv', 10765, 'Sci-Fi & Fantasy TV-Shows','en','tv'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/tv', 9648, 'Mystery','en','tv'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/tv', '9648,16', 'Mystery Anime','ja','tv','10762'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/tv', '18', 'K-Drama','ko','tv','10762'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/tv', '10759,18', 'Shows With Some Action','en','tv','10762'),
+      getcardsurl('https://api.themoviedb.org/3/tv/airing_today', 'New Shows','tv'),
+      getcardsurl('https://api.themoviedb.org/3/tv/top_rated', 'Highest Rated Shows','tv'),
+      getcardsgenre('https://api.themoviedb.org/3/discover/tv', '18,16', 'Shonen Jump','ja','tv','10762'),
+
     ]);
 
     const reccomendations = {};
@@ -218,14 +237,27 @@ async function updateRecommendations() {
     }
 
     const banner = await getbanner('https://api.themoviedb.org/3/movie/popular');
-    const banneridx = Math.floor(Math.random() * Math.min(20, banner.results.length));
-    const trailer = await getrailer(banner.results[banneridx].id);
-    const logo = await getlogo(banner.results[banneridx].id);
+
+    let validBannerOptions = [];
+    for (const movie of banner.results) {
+      const logos = await getlogo(movie.id);
+      if (logos.length > 0) {
+        validBannerOptions.push({ movie, logos });
+      }
+    }
+
+    if (validBannerOptions.length === 0) {
+      throw new Error("No banner candidate has a valid logo");
+    }
+
+    const banneridx = Math.floor(Math.random() * validBannerOptions.length);
+    const selected = validBannerOptions[banneridx];
+    const trailer = await getrailer(selected.movie.id);
 
     reccomendations.BannerData = {
       bannerindex: banneridx,
-      bannerdetail: banner,
-      logo,
+      bannerdetail: { results: validBannerOptions.map(v => v.movie) },
+      logo: selected.logos,
       trailer,
     };
 
@@ -251,7 +283,9 @@ app.get('/getrec1', (req, res) => {
   res.status(200).json({
     card1:cachedRecs.card1,
     card2:cachedRecs.card2,
-    card3:cachedRecs.card3});
+    card16:cachedRecs.card16,
+
+  });
 });
 
 app.get('/getrec2', (req, res) => {
@@ -259,9 +293,10 @@ app.get('/getrec2', (req, res) => {
     return res.status(503).json({ message: "Recommendations are being prepared, please try again shortly." });
   }
   res.status(200).json({
-    card4:cachedRecs.card4,
-    card5:cachedRecs.card5,
-    card6:cachedRecs.card6});
+    card17:cachedRecs.card17,
+    card3:cachedRecs.card3,
+    card13:cachedRecs.card13,
+  });
 });
 
 app.get('/getrec3', (req, res) => {
@@ -272,6 +307,40 @@ app.get('/getrec3', (req, res) => {
     card7:cachedRecs.card7,
     card8:cachedRecs.card8,
     card9:cachedRecs.card9});
+});
+
+app.get('/getrec4',(req,res)=>{
+  if (!cachedRecs) {
+    return res.status(503).json({ message: "Recommendations are being prepared, please try again shortly." });
+  }
+  res.status(200).json({
+    card10:cachedRecs.card10,
+    card11:cachedRecs.card11,
+    card12:cachedRecs.card12
+  });
+});
+
+app.get('/getrec5',(req,res)=>{
+  if (!cachedRecs) {
+    return res.status(503).json({ message: "Recommendations are being prepared, please try again shortly." });
+  }
+  res.status(200).json({
+    card4:cachedRecs.card4,
+    card5:cachedRecs.card5,
+    card15:cachedRecs.card15
+    
+  });
+});
+
+app.get('/getrec6',(req,res)=>{
+  if (!cachedRecs) {
+    return res.status(503).json({ message: "Recommendations are being prepared, please try again shortly." });
+  }
+  res.status(200).json({
+    card17:cachedRecs.card17,
+    card6:cachedRecs.card6,
+    card18:cachedRecs.card18
+  });
 });
 
 
