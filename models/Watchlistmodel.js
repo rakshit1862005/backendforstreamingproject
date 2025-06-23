@@ -6,7 +6,13 @@ const movieSchema = new mongoose.Schema({
   backdrop_path: String,
   poster_path: String,
   overview: String,
-  media_type: String
+  media_type: {type:String,default:'movie'},
+  original_language: {type:String,default:'en'},
+  vote_average : Number,
+  vote_count : Number,
+  release_date : Date,
+  user_rating : {type:String,default:'neutral'}
+
 }, { _id: false });
 
 const userWatchlistSchema = new mongoose.Schema({
