@@ -11,7 +11,8 @@ const movieSchema = new mongoose.Schema({
   vote_average : Number,
   vote_count : Number,
   release_date : Date,
-  user_rating : {type:String,default:'neutral'}
+  user_rating : {type:String,default:'neutral'},
+  genre_id: Array
 
 }, { _id: false });
 
