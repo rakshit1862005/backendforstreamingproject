@@ -61,9 +61,9 @@ router.post('/checklist',async(req,res)=>{
   try{
     let userDoc = await WatchlistModel.findOne({email});
     if(userDoc){
-    let status = userDoc.Watchlist.some(item=> item.movie_id==movie);
+    let status = userDoc.Watchlist.find(item=> item.movie_id==movie);
       if(status){
-        return res.status(200).json({message:"found"});
+        return res.status(200).json({message:"found",user_rating:status.user_rating});
 
       }
       else{
