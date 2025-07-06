@@ -36,11 +36,11 @@ const today = new Date();
 const twoMonthsAgo = new Date();
 twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
 
-async function getlogo(id,type='movie') {
+async function getlogo(id,typee='movie') {
     const m_id=id;
     const options = {
     method: 'GET',
-    url: `https://api.themoviedb.org/3/${type}/${m_id}/images`,
+    url: `https://api.themoviedb.org/3/${typee}/${m_id}/images`,
     headers: {
         accept: 'application/json',
         Authorization: tmdbkey
@@ -277,11 +277,26 @@ async function updateRecommendations() {
   }
 }
 
-app.get('/getrecbanner', (req, res) => {
+app.get('/getrecbanner', async (req, res) => {
+  const idx = Math.floor(Math.random()*20);
+  const email = req.query.email;
+  const k = req.query.k;
+  if(email){
+    let response = await axios.get(`https://collaborative-model-for-fyndr.onrender.com/recommend/${email}?top_k=${k||20}`);
+    const logopath = await getlogo(response.data['data'][idx].movie_id,response.data['data'][idx].media_type);
+    let d = response.data['data'];
+    res.status(200).json({BannerData:{
+      bannerindex:idx,logo:logopath,bannerdetail:{
+        results:d
+      }
+    }})
+  }
+  else{
   if (!cachedRecs) {
     return res.status(503).json({ message: "Recommendations are being prepared, please try again shortly." });
   }
   res.status(200).json({BannerData:cachedRecs.BannerData});
+}
 });
 
 app.get('/getrec1', (req, res) => {
@@ -354,7 +369,18 @@ app.get('/getrec6',(req,res)=>{
   });
 });
 
-
+app.get('/toppicks',async (req,res)=>{
+  const email = req.query.email;
+  const k = req.query.k;
+  let response = await axios.get(`https://collaborative-model-for-fyndr.onrender.com/recommend/${email}?top_k=${k||20}`);
+  res.status(200).json({
+    card0:{
+      acardname:"Top Picks For You",
+      data:response.data['data']
+    }
+  });
+  
+})
 
 
 app.get('/searchkey',async(req,res)=>{
