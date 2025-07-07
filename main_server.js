@@ -311,8 +311,11 @@ app.get('/getrecbanner', async (req, res) => {
     })
     const idx = Math.floor(Math.random()*(response.data['data']).length);
     res.status(200).json({BannerData:{
-      bannerindex:idx,logo:response.data['data'][idx].logopath,bannerdetail:{
-        results:response.data['data']
+      bannerindex:idx,
+        logo:response.data['data'][idx].logopath,
+        bannerdetail:{
+        results:response.data['data'],
+          name:response.data['data'][idx].title
       }
     }})
   }
