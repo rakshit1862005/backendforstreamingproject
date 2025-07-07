@@ -282,15 +282,21 @@ async function updateRecommendations() {
 }
 
 app.get('/getrecbanner', async (req, res) => {
-  const idx = Math.floor(Math.random()*20);
   const email = req.query.email;
   const k = req.query.k;
   if(email){
     let response = await axios.get(`https://collaborative-model-for-fyndr.onrender.com/recommend/${email}?top_k=${k||20}`);
-    const logopath = await getlogo(response.data['data'][idx].movie_id,response.data['data'][idx].media_type);
     let d = response.data['data'];
+    response.data['data']= await Promise.all(response.data['data'].map(async(movie)=>{
+      const logopath = await getlogo(movie.movie_id,movie.media_type);
+      return {...movie,logopath}
+    }))
+    response.data['data']= response.data['data'].filter(async(movie)=>{
+      movie.logopath!=null;
+    })
+    const idx = Math.floor(Math.random()*(response.data['data']).length);
     res.status(200).json({BannerData:{
-      bannerindex:idx,logo:logopath,bannerdetail:{
+      bannerindex:idx,logo:response.data['data'][idx].logopath,bannerdetail:{
         results:d
       }
     }})
