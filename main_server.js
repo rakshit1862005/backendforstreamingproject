@@ -215,6 +215,10 @@ let cachedRecs = null;
 
 setInterval(updateRecommendations, 1000 * 60 * 3);
 
+setInterval(async ()=>{
+  let response = await axios.get(`https://fyndr.onrender.com/ping`);
+},1000*60*5);
+
 async function updateRecommendations() {
   try {
     const cards = await Promise.all([
@@ -395,3 +399,6 @@ app.get('/getlogo',async (req,res)=>{
   res.status(200).json(result);
 })
 
+app.get('/ping',(req,res)=>{
+  res.status(200).message('Pinged');
+})
