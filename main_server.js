@@ -286,7 +286,6 @@ app.get('/getrecbanner', async (req, res) => {
   const k = req.query.k;
   if(email){
     let response = await axios.get(`https://collaborative-model-for-fyndr.onrender.com/recommend/${email}?top_k=${k||20}`);
-    let d = response.data['data'];
     response.data['data']= await Promise.all(response.data['data'].map(async(movie)=>{
       const logopath = await getlogo(movie.movie_id,movie.media_type);
       return {...movie,logopath}
@@ -294,6 +293,7 @@ app.get('/getrecbanner', async (req, res) => {
     response.data['data']= response.data['data'].filter((movie)=>{
       return movie.logopath!=null && movie.backdrop_path!=null;
     })
+    let d = response.data['data'];
     const idx = Math.floor(Math.random()*(response.data['data']).length);
     res.status(200).json({BannerData:{
       bannerindex:idx,logo:response.data['data'][idx].logopath,bannerdetail:{
