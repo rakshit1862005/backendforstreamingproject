@@ -40,7 +40,7 @@ async function getlogo(id,typee='movie') {
   try {
     const options = {
       method: 'GET',
-      url: `https://api.themoviedb.org/3/${type}/${id}/images`,
+      url: `https://api.themoviedb.org/3/${typee}/${id}/images`,
       headers: {
         accept: 'application/json',
         Authorization: tmdbkey
@@ -50,7 +50,7 @@ async function getlogo(id,typee='movie') {
     return resp.data.logos.filter(lang => lang.iso_639_1 === "en");
   } catch (err) {
       
-    const fallbackType = (type === 'movie') ? 'tv' : 'movie';
+    const fallbackType = (typee === 'movie') ? 'tv' : 'movie';
     try {
       const options = {
         method: 'GET',
