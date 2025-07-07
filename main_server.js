@@ -37,20 +37,36 @@ const twoMonthsAgo = new Date();
 twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
 
 async function getlogo(id,typee='movie') {
-    const m_id=id;
+  try {
     const options = {
-    method: 'GET',
-    url: `https://api.themoviedb.org/3/${typee}/${m_id}/images`,
-    headers: {
+      method: 'GET',
+      url: `https://api.themoviedb.org/3/${type}/${id}/images`,
+      headers: {
         accept: 'application/json',
         Authorization: tmdbkey
-    }
+      }
     };
     const resp = await axios.request(options);
-    const logos = resp.data.logos.filter(lang=>lang.iso_639_1=="en");
-
-
-    return(logos);
+    return resp.data.logos.filter(lang => lang.iso_639_1 === "en");
+  } catch (err) {
+      
+    const fallbackType = (type === 'movie') ? 'tv' : 'movie';
+    try {
+      const options = {
+        method: 'GET',
+        url: `https://api.themoviedb.org/3/${fallbackType}/${id}/images`,
+        headers: {
+          accept: 'application/json',
+          Authorization: tmdbkey
+        }
+      };
+      const resp = await axios.request(options);
+      return resp.data.logos.filter(lang => lang.iso_639_1 === "en");
+    } catch (fallbackErr) {
+      console.warn(`Logo fetch failed for ${id} with both movie and tv`);
+      return null;
+    }
+  }
 
 }
 
