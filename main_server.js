@@ -400,5 +400,5 @@ app.get('/getlogo',async (req,res)=>{
 })
 
 app.get('/ping',(req,res)=>{
-  res.status(200).message('Pinged');
+  res.status(200).send('Pinged');
 })
