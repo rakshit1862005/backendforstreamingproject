@@ -292,7 +292,7 @@ app.get('/getrecbanner', async (req, res) => {
       return {...movie,logopath}
     }))
     response.data['data']= response.data['data'].filter(async(movie)=>{
-      movie.logopath!=null && logopath!=[];
+      movie.logopath!=null;
     })
     const idx = Math.floor(Math.random()*(response.data['data']).length);
     res.status(200).json({BannerData:{
