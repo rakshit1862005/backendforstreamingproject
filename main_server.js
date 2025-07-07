@@ -291,8 +291,8 @@ app.get('/getrecbanner', async (req, res) => {
       const logopath = await getlogo(movie.movie_id,movie.media_type);
       return {...movie,logopath}
     }))
-    response.data['data']= response.data['data'].filter(async(movie)=>{
-      movie.logopath!=null;
+    response.data['data']= response.data['data'].filter((movie)=>{
+      return movie.logopath!=null && movie.backdrop_path!=null;
     })
     const idx = Math.floor(Math.random()*(response.data['data']).length);
     res.status(200).json({BannerData:{
