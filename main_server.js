@@ -216,7 +216,7 @@ let cachedRecs = null;
 setInterval(updateRecommendations, 1000 * 60 * 3);
 
 setInterval(async ()=>{
-  let response = await axios.get(`https://fyndr.onrender.com/ping`);
+  let response = await axios.get(`https://fyndr-sea.onrender.com/ping`);
 },1000*60*5);
 
 async function updateRecommendations() {
