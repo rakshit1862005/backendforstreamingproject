@@ -233,7 +233,7 @@ setInterval(updateRecommendations, 1000 * 60 * 3);
 
 setInterval(async ()=>{
   let response = await axios.get(`https://fyndr-sea.onrender.com/ping`);
-},1000*60*5);
+},1000*60*60);
 
 async function updateRecommendations() {
   try {
